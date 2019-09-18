@@ -1,6 +1,6 @@
 import numpy as np
 
-from .acceleration import get_acceleration
+from .potential import get_acceleration
 from .energy import get_conserved
 from .initial import initialise
 from .timestep import step_leapfrog
