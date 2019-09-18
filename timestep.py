@@ -1,4 +1,4 @@
-from .potential import get_acceleration
+from potential import get_acceleration
 
 
 def step_leapfrog(x, v, a, dt):

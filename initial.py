@@ -16,32 +16,36 @@ def initialise():
 
     # Set up a binary orbit of two particles representing the centres
     # of the galaxies
-    mass_1 = 1.0
-    mass_2 = 1.0
-    mass_total = mass_1 + mass_2
+    m1 = 1.0
+    m2 = 1.0
+    mass_total = m1 + m2
 
-    position_1 = -r * mass_1 / mass_total
-    position_2 = r * mass_2 / mass_total
+    x1 = np.zeros(3)
+    x2 = np.zeros(3)
+    x1[0] = -r * m1 / mass_total
+    x2[0] = r * m2 / mass_total
 
     v0 = np.sqrt(a * (1.0 - e ** 2) * mass_total) / r
 
-    velocity_1 = -mass_2 / mass_total * v0
-    velocity_2 = mass_1 / mass_total * v0
+    v1 = np.zeros(3)
+    v2 = np.zeros(3)
+    v1[1] = -m2 / mass_total * v0
+    v2[1] = m1 / mass_total * v0
 
     # Create galaxies
     x1, v1, n1 = add_galaxy(
         number_of_rings=5,
-        centre_of_mass_position=position_1,
-        centre_of_mass_velocity=velocity_1,
-        particle_mass=mass_1,
+        centre_of_mass_position=x1,
+        centre_of_mass_velocity=v1,
+        particle_mass=m1,
         inclination=inclination,
     )
 
     x2, v2, n2 = add_galaxy(
         number_of_rings=5,
-        centre_of_mass_position=position_2,
-        centre_of_mass_velocity=velocity_2,
-        particle_mass=mass_2,
+        centre_of_mass_position=x2,
+        centre_of_mass_velocity=v2,
+        particle_mass=m2,
         inclination=inclination,
     )
 
@@ -52,8 +56,8 @@ def initialise():
     # Make mass array
     number_of_particles = n1 + n2
     mass = np.zeros(number_of_particles)
-    mass[0] = mass_1
-    mass[1] = mass_2
+    mass[0] = m1
+    mass[1] = m2
 
     return position, velocity, mass
 
@@ -71,24 +75,25 @@ def add_galaxy(
     # Calculate the number of particles
     number_of_particles = 0
     for idxi in range(number_of_rings):
-        nphi = 12 + 6 * (idxi - 1)  # see toomre
+        nphi = 12 + 6 * idxi  # see toomre
         number_of_particles += nphi
 
     # Initialise arrays
-    position = np.zeros(number_of_particles, 3)
-    velocity = np.zeros(number_of_particles, 3)
+    position = np.zeros((number_of_particles, 3))
+    velocity = np.zeros((number_of_particles, 3))
 
+    # Set particle positions
+    particle_number = 0
     for idxi in range(number_of_rings):
-        ri = idxi * dr
-        nphi = 12 + 6 * (idxi - 1)  # see Toomre
+        ri = (idxi + 1) * dr
+        nphi = 12 + 6 * idxi  # see Toomre
         vphi = np.sqrt(particle_mass / ri)  # Keplerian rotation
         dphi = 2 * np.pi / nphi
 
         print(f'r = {ri}, nphi = {nphi}, dphi = {dphi}')
 
         for idxj in range(nphi):
-            particle_number = idxi * idxj + idxj
-            phi = (idxj - 1) * dphi
+            phi = idxj * dphi
 
             xyz = [
                 ri * np.cos(phi) * np.cos(inclination),
@@ -104,5 +109,7 @@ def add_galaxy(
 
             position[particle_number, :] = centre_of_mass_position + xyz
             velocity[particle_number, :] = centre_of_mass_velocity + vxyz
+
+            particle_number += 1
 
     return position, velocity, number_of_particles

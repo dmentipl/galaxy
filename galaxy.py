@@ -1,9 +1,9 @@
 import numpy as np
 
-from .potential import get_acceleration
-from .energy import get_conserved
-from .initial import initialise
-from .timestep import step_leapfrog
+from potential import get_acceleration
+from energy import get_conserved
+from initial import initialise
+from timestep import step_leapfrog
 
 position, velocity, mass = initialise()
 

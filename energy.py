@@ -1,6 +1,6 @@
 import numpy as np
 
-from .potential import potential
+from potential import potential
 
 
 def get_conserved(x, v, m):
