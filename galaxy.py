@@ -4,11 +4,7 @@ from initial import initialise
 from potential import get_acceleration
 from timestep import step_leapfrog
 
-position, velocity, mass = initialise()
-
-number_of_particles = mass.size
-
-acceleration = get_acceleration(position, mass)
+energy_filename = 'nbody.dat'
 
 dt = 0.01
 dtout = 10.0
@@ -17,7 +13,13 @@ tmax = 2000.0
 nsteps = int(tmax / dt) + 1
 idx_output = 0
 
-with open('nbody.ev', 'w') as file_handle:
+position, velocity, mass = initialise()
+
+number_of_particles = mass.size
+
+acceleration = get_acceleration(position, mass)
+
+with open(energy_filename, 'w') as file_handle:
 
     for idx in range(nsteps):
 
