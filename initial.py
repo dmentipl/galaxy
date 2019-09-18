@@ -3,6 +3,8 @@ import numpy as np
 
 def initialise():
 
+    print('Setup initial conditions')
+
     # eccentricity and distance
     e = 0.6
     rmin = 25.0
@@ -69,6 +71,8 @@ def add_galaxy(
     particle_mass,
     inclination,
 ):
+
+    print('Add a galaxy')
 
     dr = 3.0
 

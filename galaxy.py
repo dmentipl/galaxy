@@ -1,37 +1,46 @@
 import numpy as np
-
-from potential import get_acceleration
 from energy import get_conserved
 from initial import initialise
+from potential import get_acceleration
 from timestep import step_leapfrog
 
 position, velocity, mass = initialise()
 
-number_of_particles = np.mass.size
-
-print('Initial conditions')
-print(f'Number of particles: {number_of_particles}')
-print(f'Position: {position}')
-print(f'Velocity: {velocity}')
+number_of_particles = mass.size
 
 acceleration = get_acceleration(position, mass)
-
-print(f'Acceleration: {acceleration}')
 
 dt = 0.01
 dtout = 10.0
 nout = int(dtout / dt)
 tmax = 2000.0
 nsteps = int(tmax / dt) + 1
+idx_output = 0
 
-for idx in range(nsteps):
+with open('nbody.ev', 'w') as file_handle:
 
-    position, velocity = step_leapfrog(position, velocity)
-    time = idx * dt
+    for idx in range(nsteps):
 
-    if np.mod(idx, nout) == 0:
+        position, velocity = step_leapfrog(position, velocity, acceleration, mass, dt)
+        time = idx * dt
 
-        filename = f'snap_{idx:05}'
-        np.savetxt(filename, np.column_stack([position, velocity, mass]))
+        if np.mod(idx, nout) == 0:
+
+            filename = f'snap_{idx_output:05}'
+            print(f'Writing output to {filename}')
+            np.savetxt(filename, np.column_stack([position, velocity, mass]))
+            idx_output += 1
 
         energy, momentum, angular_momentum = get_conserved(position, velocity, mass)
+
+        file_handle.write(
+            f'{time:.8e} '
+            f'{energy:.8e} '
+            f'{momentum[0]:.8e} '
+            f'{momentum[1]:.8e} '
+            f'{momentum[2]:.8e} '
+            f'{angular_momentum[0]:.8e} '
+            f'{angular_momentum[1]:.8e} '
+            f'{angular_momentum[2]:.8e} '
+            '\n'
+        )

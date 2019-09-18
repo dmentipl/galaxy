@@ -12,7 +12,7 @@ def get_conserved(x, v, m):
     angular_momentum = np.zeros(3)
 
     for i in range(number_of_particles):
-        kinetic_energy += 1/2 * m[i] * np.linalg(v[i, :]) ** 2
+        kinetic_energy += 1/2 * m[i] * np.linalg.norm(v[i, :]) ** 2
         momentum += m[i] * v[i, :]
         angular_momentum += m[i] * np.cross(x[i, :], v[i, :])
 
