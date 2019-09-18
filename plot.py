@@ -2,18 +2,18 @@
 Plot my galaxy simulation.
 """
 
+import pathlib
+
 import matplotlib.pyplot as plt
 import pandas as pd
 
-number_of_files = 100
+# Current directory
+cwd = pathlib.Path.cwd()
 
-# Make a list of snap file names
-# This uses f-strings to put variables into strings
-snaps = list()
-for number in range(number_of_files):
-    snaps.append(f'snap_{number:05}')
+# Get files like snap_*
+snaps = list(cwd.glob('snap_*'))
 
-# See the list
+# See the list of snaps
 print(snaps)
 
 # Get the data for the first snap as a "Pandas data frame"
