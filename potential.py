@@ -1,6 +1,8 @@
+import numba
 import numpy as np
 
 
+@numba.njit
 def get_acceleration(x, m):
 
     number_of_particles = m.size
@@ -15,6 +17,7 @@ def get_acceleration(x, m):
     return a
 
 
+@numba.njit
 def potential(x, m):
 
     number_of_particles = m.size

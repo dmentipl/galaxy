@@ -1,8 +1,10 @@
+import numba
 import numpy as np
 
 from potential import potential
 
 
+@numba.njit
 def get_conserved(x, v, m):
 
     number_of_particles = m.size
