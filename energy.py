@@ -1,3 +1,5 @@
+"""Energy and conserved quantities."""
+
 import numba
 import numpy as np
 
@@ -5,7 +7,15 @@ from potential import potential
 
 
 @numba.njit
-def get_conserved(x, v, m):
+def get_conserved(position, velocity, mass):
+    """Get conserved quantities.
+
+    Parameters
+    ----------
+    """
+    x = position
+    v = velocity
+    m = mass
 
     number_of_particles = m.size
 
@@ -14,7 +24,7 @@ def get_conserved(x, v, m):
     angular_momentum = np.zeros(3)
 
     for i in range(number_of_particles):
-        kinetic_energy += 1/2 * m[i] * np.linalg.norm(v[i, :]) ** 2
+        kinetic_energy += 1 / 2 * m[i] * np.linalg.norm(v[i, :]) ** 2
         momentum += m[i] * v[i, :]
         angular_momentum += m[i] * np.cross(x[i, :], v[i, :])
 

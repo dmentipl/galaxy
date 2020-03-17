@@ -1,85 +1,100 @@
+"""Initial conditions."""
+
 import numpy as np
 
 
-def initialise():
+def initialise(
+    mass1,
+    mass2,
+    eccentricity,
+    minimum_distance,
+    inclination,
+    number_of_rings,
+    ring_spacing,
+):
+    """Initial conditions.
 
+    Parameters
+    ----------
+    """
     print('Setup initial conditions')
 
-    # eccentricity and distance
-    e = 0.6
-    rmin = 25.0
+    # Convert inclination to radians
+    inclination = inclination * (np.pi / 180.0)
 
-    # galaxy inclination
-    inclination = 60.0 * (np.pi / 180.0)
-
-    # start at apastron rather than periastron
-    a = rmin / (1.0 - e)
-    r = a * (1.0 + e)
+    # Start at apastron rather than periastron
+    semi_major_axis = minimum_distance / (1.0 - eccentricity)
+    radius = semi_major_axis * (1.0 + eccentricity)
 
     # Set up a binary orbit of two particles representing the centres
     # of the galaxies
-    m1 = 1.0
-    m2 = 1.0
-    mass_total = m1 + m2
+    mass_total = mass1 + mass2
 
-    x1 = np.zeros(3)
-    x2 = np.zeros(3)
-    x1[0] = -r * m1 / mass_total
-    x2[0] = r * m2 / mass_total
+    position1 = np.zeros(3)
+    position2 = np.zeros(3)
+    position1[0] = -radius * mass1 / mass_total
+    position2[0] = radius * mass2 / mass_total
 
-    v0 = np.sqrt(a * (1.0 - e ** 2) * mass_total) / r
-
-    v1 = np.zeros(3)
-    v2 = np.zeros(3)
-    v1[1] = -m2 / mass_total * v0
-    v2[1] = m1 / mass_total * v0
-
-    # Create galaxies
-    x1, v1, n1 = add_galaxy(
-        number_of_rings=5,
-        centre_of_mass_position=x1,
-        centre_of_mass_velocity=v1,
-        particle_mass=m1,
-        inclination=inclination,
+    velocity0 = (
+        np.sqrt(semi_major_axis * (1.0 - eccentricity ** 2) * mass_total) / radius
     )
 
-    x2, v2, n2 = add_galaxy(
-        number_of_rings=5,
-        centre_of_mass_position=x2,
-        centre_of_mass_velocity=v2,
-        particle_mass=m2,
+    velocity1 = np.zeros(3)
+    velocity2 = np.zeros(3)
+    velocity1[1] = -mass2 / mass_total * velocity0
+    velocity2[1] = mass1 / mass_total * velocity0
+
+    # Create galaxies
+    position1, velocity1, n1 = add_galaxy(
+        centre_of_mass_position=position1,
+        centre_of_mass_velocity=velocity1,
+        particle_mass=mass1,
         inclination=inclination,
+        number_of_rings=number_of_rings,
+        ring_spacing=ring_spacing,
+    )
+
+    position2, velocity2, n2 = add_galaxy(
+        centre_of_mass_position=position2,
+        centre_of_mass_velocity=velocity2,
+        particle_mass=mass2,
+        inclination=inclination,
+        number_of_rings=number_of_rings,
+        ring_spacing=ring_spacing,
     )
 
     # Make position and velocity arrays
-    position = np.concatenate((x1, x2))
-    velocity = np.concatenate((v1, v2))
+    position = np.concatenate((position1, position2))
+    velocity = np.concatenate((velocity1, velocity2))
 
     # Make mass array
     number_of_particles = n1 + n2
     mass = np.zeros(number_of_particles)
-    mass[0] = m1
-    mass[1] = m2
+    mass[0] = mass1
+    mass[1] = mass2
 
     return position, velocity, mass
 
 
 def add_galaxy(
-    number_of_rings,
     centre_of_mass_position,
     centre_of_mass_velocity,
     particle_mass,
     inclination,
+    number_of_rings,
+    ring_spacing,
 ):
+    """Add galaxy to initial conditions.
 
+    Parameters
+    ----------
+    """
     print('Add a galaxy')
-
-    dr = 3.0
 
     # Calculate the number of particles
     number_of_particles = 0
     for idxi in range(number_of_rings):
-        nphi = 12 + 6 * idxi  # see toomre
+        nphi = 12 + 6 * idxi
         number_of_particles += nphi
 
     # Initialise arrays
@@ -89,9 +104,10 @@ def add_galaxy(
     # Set particle positions
     particle_number = 0
     for idxi in range(number_of_rings):
-        ri = (idxi + 1) * dr
-        nphi = 12 + 6 * idxi  # see Toomre
-        vphi = np.sqrt(particle_mass / ri)  # Keplerian rotation
+        ri = (idxi + 1) * ring_spacing
+        nphi = 12 + 6 * idxi
+        # Keplerian rotation
+        vphi = np.sqrt(particle_mass / ri)
         dphi = 2 * np.pi / nphi
 
         print(f'r = {ri}, nphi = {nphi}, dphi = {dphi}')

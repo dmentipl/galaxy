@@ -1,9 +1,18 @@
+"""Forces: acceleration and gravitational potential."""
+
 import numba
 import numpy as np
 
 
 @numba.njit
-def get_acceleration(x, m):
+def get_acceleration(position, mass):
+    """Get acceleration on particles.
+
+    Parameters
+    ----------
+    """
+    x = position
+    m = mass
 
     number_of_particles = m.size
     a = np.zeros_like(x)
@@ -18,14 +27,21 @@ def get_acceleration(x, m):
 
 
 @numba.njit
-def potential(x, m):
+def potential(position, mass):
+    """Get gravitational potential on particles.
+
+    Parameters
+    ----------
+    """
+    x = position
+    m = mass
 
     number_of_particles = m.size
     potential = 0.0
 
     for i in range(number_of_particles):
         phi = 0.0
-        for j in range(i+1, 2):
+        for j in range(i + 1, 2):
             dx = x[i, :] - x[j, :]
             r = np.linalg.norm(dx)
             phi += -m[j] / r

@@ -1,6 +1,4 @@
-"""
-Plot my galaxy simulation.
-"""
+"""Plot my galaxy simulation."""
 
 import pathlib
 
