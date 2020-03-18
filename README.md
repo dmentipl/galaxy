@@ -3,14 +3,12 @@ Galaxy lab
 
 N-body lab.
 
-To run:
+To run the simulation:
 
 ```
 python galaxy.py
 ```
 
-To plot:
+To analyse and visualise the results open the `galaxy.ipynb` notebook in Jupter Lab.
 
-```
-python plot.py
-```
+Note: see also `plot.py` for plotting, etc.
