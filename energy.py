@@ -6,28 +6,22 @@ import numpy as np
 from potential import potential
 
 
-@numba.njit
 def get_conserved(position, velocity, mass):
     """Get conserved quantities.
 
     Parameters
     ----------
     """
-    x = position
-    v = velocity
-    m = mass
+    # Note the numpy trick: we require [:, np.newaxis] because mass has shape (n,)
+    # whereas velocity has shape (n, 3)
+    momentum = mass[:, np.newaxis] * velocity
+    angular_momentum = mass[:, np.newaxis] * np.cross(position, velocity)
+    kinetic_energy = 1 / 2 * mass[:, np.newaxis] * np.linalg.norm(velocity, axis=1) ** 2
 
-    number_of_particles = m.size
+    momentum = momentum.sum(axis=1)
+    angular_momentum = angular_momentum.sum(axis=1)
+    kinetic_energy = kinetic_energy.sum()
 
-    kinetic_energy = 0.0
-    momentum = np.zeros(3)
-    angular_momentum = np.zeros(3)
-
-    for i in range(number_of_particles):
-        kinetic_energy += 1 / 2 * m[i] * np.linalg.norm(v[i, :]) ** 2
-        momentum += m[i] * v[i, :]
-        angular_momentum += m[i] * np.cross(x[i, :], v[i, :])
-
-    energy = kinetic_energy + potential(x, m)
+    energy = kinetic_energy + potential(position, mass)
 
     return energy, momentum, angular_momentum

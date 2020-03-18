@@ -11,19 +11,16 @@ def get_acceleration(position, mass):
     Parameters
     ----------
     """
-    x = position
-    m = mass
-
-    number_of_particles = m.size
-    a = np.zeros_like(x)
+    number_of_particles = len(mass)
+    acceleration = np.zeros_like(position)
 
     for i in range(number_of_particles):
         for j in (0, 1):
             if j != i:
-                dx = x[i, :] - x[j, :]
+                dx = position[i, :] - position[j, :]
                 r = np.linalg.norm(dx)
-                a[i, :] += -m[j] * dx / r ** 3
-    return a
+                acceleration[i, :] += -mass[j] * dx / r ** 3
+    return acceleration
 
 
 @numba.njit
@@ -33,18 +30,15 @@ def potential(position, mass):
     Parameters
     ----------
     """
-    x = position
-    m = mass
-
-    number_of_particles = m.size
+    number_of_particles = len(mass)
     potential = 0.0
 
     for i in range(number_of_particles):
         phi = 0.0
         for j in range(i + 1, 2):
-            dx = x[i, :] - x[j, :]
+            dx = position[i, :] - position[j, :]
             r = np.linalg.norm(dx)
-            phi += -m[j] / r
-        potential += m[i] * phi
+            phi += -mass[j] / r
+        potential += mass[i] * phi
 
     return potential

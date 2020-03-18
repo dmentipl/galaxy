@@ -30,24 +30,24 @@ def initialise(
     # of the galaxies
     mass_total = mass1 + mass2
 
-    position1 = np.zeros(3)
-    position2 = np.zeros(3)
-    position1[0] = -radius * mass1 / mass_total
-    position2[0] = radius * mass2 / mass_total
+    center_of_mass_position1 = np.zeros(3)
+    center_of_mass_position2 = np.zeros(3)
+    center_of_mass_position1[0] = -radius * mass2 / mass_total
+    center_of_mass_position2[0] = radius * mass1 / mass_total
 
     velocity0 = (
         np.sqrt(semi_major_axis * (1.0 - eccentricity ** 2) * mass_total) / radius
     )
 
-    velocity1 = np.zeros(3)
-    velocity2 = np.zeros(3)
-    velocity1[1] = -mass2 / mass_total * velocity0
-    velocity2[1] = mass1 / mass_total * velocity0
+    center_of_mass_velocity1 = np.zeros(3)
+    center_of_mass_velocity2 = np.zeros(3)
+    center_of_mass_velocity1[1] = -mass2 / mass_total * velocity0
+    center_of_mass_velocity2[1] = mass1 / mass_total * velocity0
 
     # Create galaxies
     position1, velocity1, n1 = add_galaxy(
-        centre_of_mass_position=position1,
-        centre_of_mass_velocity=velocity1,
+        centre_of_mass_position=center_of_mass_position1,
+        centre_of_mass_velocity=center_of_mass_velocity1,
         particle_mass=mass1,
         inclination=inclination,
         number_of_rings=number_of_rings,
@@ -55,20 +55,26 @@ def initialise(
     )
 
     position2, velocity2, n2 = add_galaxy(
-        centre_of_mass_position=position2,
-        centre_of_mass_velocity=velocity2,
+        centre_of_mass_position=center_of_mass_position2,
+        centre_of_mass_velocity=center_of_mass_velocity2,
         particle_mass=mass2,
         inclination=inclination,
         number_of_rings=number_of_rings,
         ring_spacing=ring_spacing,
     )
 
+    # Account for center of mass particles
+    number_of_particles = 2 + n1 + n2
+
     # Make position and velocity arrays
-    position = np.concatenate((position1, position2))
-    velocity = np.concatenate((velocity1, velocity2))
+    position = np.vstack(
+        [center_of_mass_position1, center_of_mass_position2, position1, position2]
+    )
+    velocity = np.vstack(
+        [center_of_mass_velocity1, center_of_mass_velocity2, velocity1, velocity2]
+    )
 
     # Make mass array
-    number_of_particles = n1 + n2
     mass = np.zeros(number_of_particles)
     mass[0] = mass1
     mass[1] = mass2
@@ -109,27 +115,22 @@ def add_galaxy(
         # Keplerian rotation
         vphi = np.sqrt(particle_mass / ri)
         dphi = 2 * np.pi / nphi
-
         print(f'r = {ri}, nphi = {nphi}, dphi = {dphi}')
 
         for idxj in range(nphi):
             phi = idxj * dphi
-
             xyz = [
                 ri * np.cos(phi) * np.cos(inclination),
                 ri * np.sin(phi),
                 -ri * np.cos(phi) * np.sin(inclination),
             ]
-
             vxyz = [
                 -vphi * np.sin(phi) * np.cos(inclination),
                 vphi * np.cos(phi),
                 vphi * np.sin(phi) * np.sin(inclination),
             ]
-
             position[particle_number, :] = centre_of_mass_position + xyz
             velocity[particle_number, :] = centre_of_mass_velocity + vxyz
-
             particle_number += 1
 
     return position, velocity, number_of_particles

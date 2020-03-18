@@ -6,6 +6,8 @@ from initial import initialise
 from potential import get_acceleration
 from timestep import step_leapfrog
 
+# ------------------------------------------------------------------------------------ #
+# SET PARAMETERS HERE {{{
 
 # Parameters for initial conditions
 mass1 = 1.0
@@ -24,10 +26,12 @@ tmax = 2000.0
 # Filename prefix
 filename_prefix = 'nbody'
 
+# }}}
+# ------------------------------------------------------------------------------------ #
+
 
 def main():
-    """Main function."""
-
+    """Run the simulation."""
     # Generate initial conditions
     position, velocity, mass = initialise(
         mass1,
