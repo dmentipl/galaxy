@@ -1,5 +1,7 @@
 """Main module."""
 
+import pathlib
+
 import numpy as np
 from energy import get_conserved
 from files import write_snapshot
@@ -25,7 +27,8 @@ DT = 0.01
 DTOUT = 10.0
 TMAX = 2000.0
 
-# Filename prefix
+# Parameters for data and files
+DATA_DIRECTORY = '../data'
 FILENAME_PREFIX = 'nbody'
 
 # }}}
@@ -40,7 +43,9 @@ def main():
     idx_output = 0
 
     # Set the conserved quantity filename
-    conserved_quantity_filename = FILENAME_PREFIX + '.csv'
+    conserved_quantity_filename = (
+        pathlib.Path(DATA_DIRECTORY) / FILENAME_PREFIX + '.csv'
+    )
 
     # Generate initial conditions
     position, velocity, mass = initialise(
@@ -54,7 +59,9 @@ def main():
     )
 
     # Write initial condition to file
-    write_snapshot(idx_output, FILENAME_PREFIX, position, velocity, mass)
+    write_snapshot(
+        idx_output, FILENAME_PREFIX, DATA_DIRECTORY, position, velocity, mass
+    )
     idx_output += 1
 
     # Get acceleration on initial conditions
@@ -87,7 +94,14 @@ def main():
 
             # Only write particle output every nout time steps
             if np.mod(idx, nout) == 0:
-                write_snapshot(idx_output, FILENAME_PREFIX, position, velocity, mass)
+                write_snapshot(
+                    idx_output,
+                    FILENAME_PREFIX,
+                    DATA_DIRECTORY,
+                    position,
+                    velocity,
+                    mass,
+                )
                 idx_output += 1
 
             # Write conserved quantities every time step

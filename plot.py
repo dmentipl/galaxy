@@ -10,8 +10,8 @@ from matplotlib import animation
 # Filename prefix
 prefix = 'nbody'
 
-# Data directory; here assuming it is the current directory
-directory = pathlib.Path.cwd()
+# Data directory
+directory = pathlib.Path('data')
 
 # Get files like prefix_*.txt
 snaps = sorted(directory.glob(f'{prefix}_*.csv'))
