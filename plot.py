@@ -84,8 +84,6 @@ anim.save(
 # Load the data
 df = pd.read_csv(directory / 'nbody.csv')
 
-# Plot momentum
-df.plot('time', ['momentum_x', 'momentum_y', 'momentum_z'])
-
 # Plot energy
-df.plot('time', ['kinetic_energy', 'potential_energy'])
+df['total_energy'] = df['kinetic_energy'] + df['potential_energy']
+df.plot('time', ['kinetic_energy', 'potential_energy', 'total_energy'])
