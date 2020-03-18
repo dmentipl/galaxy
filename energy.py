@@ -34,10 +34,10 @@ def get_conserved(position, velocity, mass):
     # whereas velocity has shape (n, 3)
     momentum = mass[:, np.newaxis] * velocity
     angular_momentum = mass[:, np.newaxis] * np.cross(position, velocity)
-    kinetic_energy = 1 / 2 * mass[:, np.newaxis] * np.linalg.norm(velocity, axis=1) ** 2
+    kinetic_energy = 1 / 2 * mass * np.linalg.norm(velocity, axis=1) ** 2
 
-    momentum = momentum.sum(axis=1)
-    angular_momentum = angular_momentum.sum(axis=1)
+    momentum = momentum.sum(axis=0)
+    angular_momentum = angular_momentum.sum(axis=0)
     kinetic_energy = kinetic_energy.sum()
     potential_energy = potential(position, mass)
 

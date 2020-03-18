@@ -1,6 +1,6 @@
 """Plot my galaxy simulation.
 
-NOTES
+Notes
 -----
 If there are issues with plots not appearing you can try typing
 
