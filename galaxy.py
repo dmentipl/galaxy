@@ -9,23 +9,24 @@ from timestep import step_leapfrog
 
 # ------------------------------------------------------------------------------------ #
 # SET PARAMETERS HERE {{{
+# NOTE: we write these parameters with capital letters as they are global variables
 
 # Parameters for initial conditions
-mass1 = 1.0
-mass2 = 1.0
-eccentricity = 0.6
-minimum_distance = 25.0
-inclination = 60
-number_of_rings = 5
-ring_spacing = 3.0
+MASS1 = 1.0
+MASS2 = 1.0
+ECCENTRICITY = 0.6
+MINIMUM_DISTANCE = 25.0
+INCLINATION = 60
+NUMBER_OF_RINGS = 5
+RING_SPACING = 3.0
 
 # Parameters for time stepping
-dt = 0.01
-dtout = 10.0
-tmax = 2000.0
+DT = 0.01
+DTOUT = 10.0
+TMAX = 2000.0
 
 # Filename prefix
-filename_prefix = 'nbody'
+FILENAME_PREFIX = 'nbody'
 
 # }}}
 # ------------------------------------------------------------------------------------ #
@@ -34,26 +35,26 @@ filename_prefix = 'nbody'
 def main():
     """Run the simulation."""
     # Set some time stepping parameters
-    nout = int(dtout / dt)
-    nsteps = int(tmax / dt) + 1
+    nout = int(DTOUT / DT)
+    nsteps = int(TMAX / DT) + 1
     idx_output = 0
 
     # Set the conserved quantity filename
-    conserved_quantity_filename = filename_prefix + '.csv'
+    conserved_quantity_filename = FILENAME_PREFIX + '.csv'
 
     # Generate initial conditions
     position, velocity, mass = initialise(
-        mass1,
-        mass2,
-        eccentricity,
-        minimum_distance,
-        inclination,
-        number_of_rings,
-        ring_spacing,
+        MASS1,
+        MASS2,
+        ECCENTRICITY,
+        MINIMUM_DISTANCE,
+        INCLINATION,
+        NUMBER_OF_RINGS,
+        RING_SPACING,
     )
 
     # Write initial condition to file
-    write_snapshot(idx_output, filename_prefix, position, velocity, mass)
+    write_snapshot(idx_output, FILENAME_PREFIX, position, velocity, mass)
     idx_output += 1
 
     # Get acceleration on initial conditions
@@ -80,13 +81,13 @@ def main():
 
             # Time step: get new position and velocity
             position, velocity, acceleration = step_leapfrog(
-                position, velocity, acceleration, mass, dt
+                position, velocity, acceleration, mass, DT
             )
-            time = idx * dt
+            time = idx * DT
 
             # Only write particle output every nout time steps
             if np.mod(idx, nout) == 0:
-                write_snapshot(idx_output, filename_prefix, position, velocity, mass)
+                write_snapshot(idx_output, FILENAME_PREFIX, position, velocity, mass)
                 idx_output += 1
 
             # Write conserved quantities every time step

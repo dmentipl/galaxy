@@ -21,11 +21,12 @@ def write_snapshot(idx, prefix, position, velocity, mass):
         The particle masses.
 
     """
-    filename = f'{prefix}_{idx:05}.txt'
+    filename = f'{prefix}_{idx:05}.csv'
     print(f'Writing output to {filename}')
     np.savetxt(
         filename,
         np.column_stack([position, velocity, mass]),
         delimiter=',',
         header='x,y,z,vx,vy,vz,m',
+        comments='',
     )

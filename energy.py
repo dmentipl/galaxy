@@ -1,6 +1,5 @@
 """Energy and conserved quantities."""
 
-import numba
 import numpy as np
 
 from potential import potential
@@ -11,6 +10,21 @@ def get_conserved(position, velocity, mass):
 
     Parameters
     ----------
+    position
+        The particle positions.
+    velocity
+        The particle velocities.
+    mass
+        The particle masses.
+
+    Returns
+    -------
+    energy
+        The total energy over all particles.
+    momentum
+        The total momentum over all particles.
+    angular_momentum
+        The total angular momentum over all particles.
     """
     # Note the numpy trick: we require [:, np.newaxis] because mass has shape (n,)
     # whereas velocity has shape (n, 3)
