@@ -28,7 +28,7 @@ DTOUT = 10.0
 TMAX = 2000.0
 
 # Parameters for data and files
-DATA_DIRECTORY = '../data'
+OUTPUT_DIRECTORY = 'data'
 FILENAME_PREFIX = 'nbody'
 
 # }}}
@@ -42,10 +42,14 @@ def main():
     nsteps = int(TMAX / DT) + 1
     idx_output = 0
 
+    # Check that the output directory exists
+    output_directory = pathlib.Path(OUTPUT_DIRECTORY)
+    if not output_directory.exists():
+        output_directory.mkdir()
+
     # Set the conserved quantity filename
-    conserved_quantity_filename = (
-        pathlib.Path(DATA_DIRECTORY) / FILENAME_PREFIX + '.csv'
-    )
+    conserved_quantity_filename = FILENAME_PREFIX + '.csv'
+    conserved_quantity_path = output_directory / conserved_quantity_filename
 
     # Generate initial conditions
     position, velocity, mass = initialise(
@@ -60,7 +64,7 @@ def main():
 
     # Write initial condition to file
     write_snapshot(
-        idx_output, FILENAME_PREFIX, DATA_DIRECTORY, position, velocity, mass
+        idx_output, FILENAME_PREFIX, output_directory, position, velocity, mass
     )
     idx_output += 1
 
@@ -69,12 +73,13 @@ def main():
 
     # Open a file to write conserved quantites to
     # Using the 'with' context manager automatically closes the file afterwards
-    with open(conserved_quantity_filename, 'w') as file_handle:
+    with open(conserved_quantity_path, 'w') as file_handle:
 
         # Write header for conserved quantity file
         file_handle.write(
             'time,'
-            'energy,'
+            'kinetic_energy,'
+            'potential_energy,'
             'momentum_x,'
             'momentum_y,'
             'momentum_z,'
@@ -97,7 +102,7 @@ def main():
                 write_snapshot(
                     idx_output,
                     FILENAME_PREFIX,
-                    DATA_DIRECTORY,
+                    output_directory,
                     position,
                     velocity,
                     mass,
@@ -105,10 +110,17 @@ def main():
                 idx_output += 1
 
             # Write conserved quantities every time step
-            energy, momentum, angular_momentum = get_conserved(position, velocity, mass)
+            (
+                kinetic_energy,
+                potential_energy,
+                momentum,
+                angular_momentum,
+            ) = get_conserved(position, velocity, mass)
+
             file_handle.write(
                 f'{time:.8e},'
-                f'{energy:.8e},'
+                f'{kinetic_energy:.8e},'
+                f'{potential_energy:.8e},'
                 f'{momentum[0]:.8e},'
                 f'{momentum[1]:.8e},'
                 f'{momentum[2]:.8e},'

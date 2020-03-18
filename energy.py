@@ -19,6 +19,10 @@ def get_conserved(position, velocity, mass):
 
     Returns
     -------
+    kinetic_energy
+        The total kinetic energy over all particles.
+    potential_energy
+        The total potential energy over all particles.
     energy
         The total energy over all particles.
     momentum
@@ -35,7 +39,6 @@ def get_conserved(position, velocity, mass):
     momentum = momentum.sum(axis=1)
     angular_momentum = angular_momentum.sum(axis=1)
     kinetic_energy = kinetic_energy.sum()
+    potential_energy = potential(position, mass)
 
-    energy = kinetic_energy + potential(position, mass)
-
-    return energy, momentum, angular_momentum
+    return kinetic_energy, potential_energy, momentum, angular_momentum
