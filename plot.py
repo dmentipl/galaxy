@@ -3,30 +3,35 @@
 import pathlib
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
+from matplotlib import animation
 
-# Current directory
-cwd = pathlib.Path.cwd()
+# Filename prefix
+prefix = 'nbody'
 
-# Get files like snap_*
-snaps = list(cwd.glob('snap_*'))
+# Data directory; here assuming it is the current directory
+directory = pathlib.Path.cwd()
 
-# See the list of snaps
+# Get files like prefix_*.txt
+snaps = sorted(directory.glob(f'{prefix}_*.txt'))
+
+# See the list of snapshots
 print(snaps)
 
-# Get the data for the first snap as a "Pandas data frame"
-# Remember Python counts from zero, so we choose snap[0]
+# Get the data for the first snapshot as a "Pandas data frame"
+# Remember Python counts from zero, so we choose snaps[0]
 # We skip the first row, which is the time
 # The file has lots of spaces between values, so the "delimiter" is '\s+'
 df = pd.read_csv(
-    snaps[0], names=('x', 'y', 'z', 'vx', 'vy', 'vz', 'm'), skiprows=1, delimiter=r'\s+'
+    snaps[0], names=('x', 'y', 'z', 'vx', 'vy', 'vz', 'm'), delimiter=r'\s+'
 )
 
 # See what's in the file
 print(df)
 
 # Plot the particles in xy-plane
-df.plot.scatter('x', 'y')
+df.plot.scatter('x', 'y', c='k', s=0.5)
 
 # Now read all files in to a list of data frames
 dataframes = list()
@@ -40,13 +45,25 @@ for snap in snaps:
         )
     )
 
-# Make a figure and axis
-fig, ax = plt.subplots()
+# Make an animation of the simulation
 
-# Loop over the data frames for each time
-for df in dataframes:
-    ax.clear()
-    df.plot.scatter('x', 'y', c='k', s=0.5, ax=ax)
-    ax.set_xlim(-200, 200)
-    ax.set_ylim(-200, 200)
-    plt.pause(0.05)
+# First generate a plot of initial conditions
+fig, ax = plt.subplots()
+df = dataframes[0]
+scat = ax.scatter(df['x'], df['y'], c='k', s=0.5)
+ax.set(xlim=(-200, 200), ylim=(-200, 200))
+
+
+# Then a function to update the positions
+def animate(idx):
+    print(f'Animation frame: {idx}')
+    df = dataframes[idx]
+    xy = np.array([df['x'], df['y']]).T
+    scat.set_offsets(xy)
+    return [scat]
+
+
+anim = animation.FuncAnimation(fig, animate, frames=len(dataframes))
+
+# Adjust the frames per second "fps" argument to change the animation speed.
+anim.save('animation.mp4', extra_args=['-vcodec', 'libx264'], fps=50)
