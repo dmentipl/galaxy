@@ -1,4 +1,14 @@
-"""Plot my galaxy simulation."""
+"""Plot my galaxy simulation.
+
+NOTES
+-----
+If there are issues with plots not appearing you can try typing
+
+In [1]: %matplotlib
+
+at the IPython shell. (Just the %matplotlib part.) This should cause all
+plots to appear.
+"""
 
 import pathlib
 
@@ -7,11 +17,15 @@ import numpy as np
 import pandas as pd
 from matplotlib import animation
 
+# ------------------------------------------------------------------------------------ #
+
 # Filename prefix
 prefix = 'nbody'
 
 # Data directory
 directory = pathlib.Path('data')
+
+# ------------------------------------------------------------------------------------ #
 
 # Get files like prefix_*.txt
 snaps = sorted(directory.glob(f'{prefix}_*.csv'))
@@ -33,6 +47,9 @@ df.plot.scatter('x', 'y', c='k', s=0.5)
 dataframes = list()
 for snap in snaps:
     dataframes.append(pd.read_csv(snap))
+
+
+# ------------------------------------------------------------------------------------ #
 
 # Make an animation of the simulation
 
@@ -59,3 +76,16 @@ anim = animation.FuncAnimation(fig, animate, frames=len(dataframes))
 anim.save(
     directory / 'animation.mp4', extra_args=['-vcodec', 'libx264'], fps=50, dpi=200
 )
+
+# ------------------------------------------------------------------------------------ #
+
+# Plot conserved quantities
+
+# Load the data
+df = pd.read_csv(directory / 'nbody.csv')
+
+# Plot momentum
+df.plot('time', ['momentum_x', 'momentum_y', 'momentum_z'])
+
+# Plot energy
+df.plot('time', 'energy')
