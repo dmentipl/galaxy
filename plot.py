@@ -88,4 +88,4 @@ df = pd.read_csv(directory / 'nbody.csv')
 df.plot('time', ['momentum_x', 'momentum_y', 'momentum_z'])
 
 # Plot energy
-df.plot('time', 'energy')
+df.plot('time', ['kinetic_energy', 'potential_energy'])
