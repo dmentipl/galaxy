@@ -16,8 +16,8 @@ directory = pathlib.Path('data')
 # Get files like prefix_*.txt
 snaps = sorted(directory.glob(f'{prefix}_*.csv'))
 
-# See the list of snapshots
-print(snaps)
+# See the list of (the first 10) snapshots
+print(snaps[:10])
 
 # Get the data for the first snapshot as a "Pandas data frame"
 # Remember Python counts from zero, so we choose snaps[0]
@@ -54,5 +54,8 @@ def animate(idx):
 
 anim = animation.FuncAnimation(fig, animate, frames=len(dataframes))
 
-# Adjust the frames per second "fps" argument to change the animation speed.
-anim.save('animation.mp4', extra_args=['-vcodec', 'libx264'], fps=50)
+# Adjust the "fps" argument to change the animation speed
+# Adjust the "dpi" argument to change the animation resolution
+anim.save(
+    directory / 'animation.mp4', extra_args=['-vcodec', 'libx264'], fps=50, dpi=200
+)
