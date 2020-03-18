@@ -16,6 +16,29 @@ def initialise(
 
     Parameters
     ----------
+    mass1
+        The mass of the first galaxy.
+    mass2
+        The mass of the second galaxy.
+    eccentricity
+        The eccentricity of the orbit.
+    minimum_distance
+        The minimum distance of approach for the orbit.
+    inclination
+        The inclination of the two galaxies.
+    number_of_rings
+        The number of rings in each galaxy.
+    ring_spacing
+        The distance between rings in each galaxy.
+
+    Returns
+    -------
+    position
+        The particle positions.
+    velocity
+        The particle velocities.
+    mass
+        The particle masses.
     """
     print('Setup initial conditions')
 
@@ -45,7 +68,7 @@ def initialise(
     center_of_mass_velocity2[1] = mass1 / mass_total * velocity0
 
     # Create galaxies
-    position1, velocity1, n1 = add_galaxy(
+    position1, velocity1 = add_galaxy(
         centre_of_mass_position=center_of_mass_position1,
         centre_of_mass_velocity=center_of_mass_velocity1,
         particle_mass=mass1,
@@ -54,7 +77,7 @@ def initialise(
         ring_spacing=ring_spacing,
     )
 
-    position2, velocity2, n2 = add_galaxy(
+    position2, velocity2 = add_galaxy(
         centre_of_mass_position=center_of_mass_position2,
         centre_of_mass_velocity=center_of_mass_velocity2,
         particle_mass=mass2,
@@ -63,10 +86,12 @@ def initialise(
         ring_spacing=ring_spacing,
     )
 
-    # Account for center of mass particles
+    # Total number of particles accounting for center of mass particles
+    n1, n2 = position1.shape[0], position2.shape[0]
     number_of_particles = 2 + n1 + n2
 
     # Make position and velocity arrays
+    # NOTE: the first two rows of the array are the massive particles
     position = np.vstack(
         [center_of_mass_position1, center_of_mass_position2, position1, position2]
     )
@@ -74,7 +99,7 @@ def initialise(
         [center_of_mass_velocity1, center_of_mass_velocity2, velocity1, velocity2]
     )
 
-    # Make mass array
+    # Make mass array where first two particles are massive
     mass = np.zeros(number_of_particles)
     mass[0] = mass1
     mass[1] = mass2
@@ -94,9 +119,26 @@ def add_galaxy(
 
     Parameters
     ----------
-    """
-    print('Add a galaxy')
+    centre_of_mass_position
+        The position of the galaxy center of mass.
+    centre_of_mass_velocity
+        The velocity of the galaxy center of mass.
+    particle_mass
+        The mass of the galaxy center of mass.
+    inclination
+        The galaxy inclination.
+    number_of_rings
+        The number of rings.
+    ring_spacing
+        The distance between rings.
 
+    Returns
+    -------
+    position
+        The particle positions.
+    velocity
+        The particle velocities.
+    """
     # Calculate the number of particles
     number_of_particles = 0
     for idxi in range(number_of_rings):
@@ -115,7 +157,6 @@ def add_galaxy(
         # Keplerian rotation
         vphi = np.sqrt(particle_mass / ri)
         dphi = 2 * np.pi / nphi
-        print(f'r = {ri}, nphi = {nphi}, dphi = {dphi}')
 
         for idxj in range(nphi):
             phi = idxj * dphi
@@ -133,4 +174,4 @@ def add_galaxy(
             velocity[particle_number, :] = centre_of_mass_velocity + vxyz
             particle_number += 1
 
-    return position, velocity, number_of_particles
+    return position, velocity

@@ -14,18 +14,14 @@ prefix = 'nbody'
 directory = pathlib.Path.cwd()
 
 # Get files like prefix_*.txt
-snaps = sorted(directory.glob(f'{prefix}_*.txt'))
+snaps = sorted(directory.glob(f'{prefix}_*.csv'))
 
 # See the list of snapshots
 print(snaps)
 
 # Get the data for the first snapshot as a "Pandas data frame"
 # Remember Python counts from zero, so we choose snaps[0]
-# We skip the first row, which is the time
-# The file has lots of spaces between values, so the "delimiter" is '\s+'
-df = pd.read_csv(
-    snaps[0], names=('x', 'y', 'z', 'vx', 'vy', 'vz', 'm'), delimiter=r'\s+'
-)
+df = pd.read_csv(snaps[0])
 
 # See what's in the file
 print(df)
@@ -36,14 +32,7 @@ df.plot.scatter('x', 'y', c='k', s=0.5)
 # Now read all files in to a list of data frames
 dataframes = list()
 for snap in snaps:
-    dataframes.append(
-        pd.read_csv(
-            snap,
-            names=('x', 'y', 'z', 'vx', 'vy', 'vz', 'm'),
-            skiprows=1,
-            delimiter=r'\s+',
-        )
-    )
+    dataframes.append(pd.read_csv(snap))
 
 # Make an animation of the simulation
 

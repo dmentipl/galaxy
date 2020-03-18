@@ -20,12 +20,21 @@ def step_leapfrog(position, velocity, acceleration, mass, timestep):
         Particle masses.
     timestep
         Time step.
+
+    Returns
+    -------
+    position
+        The updated particle positions.
+    velocity
+        The updated particle velocities.
+    acceleration
+        The updated particle accelerations.
     """
     dt = timestep
 
-    velocity = velocity + 0.5 * dt * acceleration
-    position = position + dt * velocity
-    new_acceleration = get_acceleration(position, mass)
-    velocity = velocity + 0.5 * dt * new_acceleration
+    velocity += 0.5 * dt * acceleration
+    position += dt * velocity
+    acceleration = get_acceleration(position, mass)
+    velocity += 0.5 * dt * acceleration
 
-    return position, velocity
+    return position, velocity, acceleration

@@ -10,9 +10,18 @@ def get_acceleration(position, mass):
 
     Parameters
     ----------
+    position
+        Particle positions.
+    mass
+        Particle masses.
+
+    Returns
+    -------
+    acceleration
+        The particle accelerations.
     """
     number_of_particles = len(mass)
-    acceleration = np.zeros_like(position)
+    acceleration = np.zeros(position.shape)
 
     for i in range(number_of_particles):
         for j in (0, 1):
@@ -29,6 +38,15 @@ def potential(position, mass):
 
     Parameters
     ----------
+    position
+        Particle positions.
+    mass
+        Particle masses.
+
+    Returns
+    -------
+    potential
+        The total gravitational potential.
     """
     number_of_particles = len(mass)
     potential = 0.0
