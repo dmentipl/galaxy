@@ -11,60 +11,87 @@ from timestep import step_leapfrog
 
 # ------------------------------------------------------------------------------------ #
 # SET PARAMETERS HERE {{{
-# NOTE: we write these parameters with capital letters as they are global variables
+
+PARAMETERS = dict()
 
 # Parameters for initial conditions
-MASS1 = 1.0
-MASS2 = 1.0
-ECCENTRICITY = 0.6
-MINIMUM_DISTANCE = 25.0
-INCLINATION = 60
-NUMBER_OF_RINGS = 5
-RING_SPACING = 3.0
+PARAMETERS['mass1'] = 1.0
+PARAMETERS['mass2'] = 1.0
+PARAMETERS['eccentricity'] = 0.6
+PARAMETERS['minimum_distance'] = 25.0
+PARAMETERS['inclination'] = 60
+PARAMETERS['number_of_rings'] = 5
+PARAMETERS['ring_spacing'] = 3.0
 
 # Parameters for time stepping
-DT = 0.01
-DTOUT = 10.0
-TMAX = 2000.0
+PARAMETERS['dt'] = 0.01
+PARAMETERS['dtout'] = 10.0
+PARAMETERS['tmax'] = 2000.0
 
 # Parameters for data and files
-OUTPUT_DIRECTORY = 'data'
-FILENAME_PREFIX = 'nbody'
+PARAMETERS['output_directory'] = 'data'
+PARAMETERS['filename_prefix'] = 'nbody'
 
 # }}}
 # ------------------------------------------------------------------------------------ #
 
 
-def main():
-    """Run the simulation."""
+def main(parameters):
+    """Run the simulation.
+
+    Parameters
+    ----------
+    parameters
+        A dictionary with parameters for the simulation.
+
+        - mass1: center of mass of galaxy 1
+        - mass2: center of mass of galaxy 2
+        - eccentricity: eccentricity of galaxy orbit
+        - minimum_distance: mimimum distance of galaxy orbit
+        - inclination: inclination of galaxy orbit
+        - number_of_rings: number of rings in each galaxy
+        - ring_spacing: spacing between rings in each galaxy
+
+        - dt: time step increment
+        - dtout: time between simulation output
+        - tmax: maximum time for the simulation
+
+        - output_directory: directory to store output
+        - filename_prefix: prefix for each snapshot file
+    """
     # Set some time stepping parameters
-    nout = int(DTOUT / DT)
-    nsteps = int(TMAX / DT) + 1
+    nout = int(parameters['dtout'] / parameters['dt'])
+    nsteps = int(parameters['tmax'] / parameters['dt']) + 1
     idx_output = 0
 
     # Check that the output directory exists
-    output_directory = pathlib.Path(OUTPUT_DIRECTORY)
+    output_directory = pathlib.Path(parameters['output_directory'])
     if not output_directory.exists():
         output_directory.mkdir()
 
     # Set the conserved quantity filename
-    conserved_quantity_filename = FILENAME_PREFIX + '.csv'
+    conserved_quantity_filename = parameters['filename_prefix'] + '.csv'
     conserved_quantity_path = output_directory / conserved_quantity_filename
 
     # Generate initial conditions
     position, velocity, mass = initialise(
-        MASS1,
-        MASS2,
-        ECCENTRICITY,
-        MINIMUM_DISTANCE,
-        INCLINATION,
-        NUMBER_OF_RINGS,
-        RING_SPACING,
+        parameters['mass1'],
+        parameters['mass2'],
+        parameters['eccentricity'],
+        parameters['minimum_distance'],
+        parameters['inclination'],
+        parameters['number_of_rings'],
+        parameters['ring_spacing'],
     )
 
     # Write initial condition to file
     write_snapshot(
-        idx_output, FILENAME_PREFIX, output_directory, position, velocity, mass
+        idx_output,
+        parameters['filename_prefix'],
+        output_directory,
+        position,
+        velocity,
+        mass,
     )
     idx_output += 1
 
@@ -93,15 +120,15 @@ def main():
 
             # Time step: get new position and velocity
             position, velocity, acceleration = step_leapfrog(
-                position, velocity, acceleration, mass, DT
+                position, velocity, acceleration, mass, parameters['dt']
             )
-            time = idx * DT
+            time = idx * parameters['dt']
 
             # Only write particle output every nout time steps
             if np.mod(idx, nout) == 0:
                 write_snapshot(
                     idx_output,
-                    FILENAME_PREFIX,
+                    parameters['filename_prefix'],
                     output_directory,
                     position,
                     velocity,
@@ -132,4 +159,6 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+
+    # Run the code with PARAMETERS defined above
+    main(PARAMETERS)
