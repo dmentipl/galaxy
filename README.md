@@ -1,11 +1,11 @@
 Galaxy lab
-----------
+==========
 
 N-body lab.
 
 To run the simulation:
 
-```
+```bash
 python galaxy.py
 ```
 
