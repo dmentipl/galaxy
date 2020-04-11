@@ -1,8 +1,11 @@
 """Time stepping."""
 
+import numba
+
 from potential import get_acceleration
 
 
+@numba.njit
 def step_leapfrog(position, velocity, acceleration, mass, timestep):
     """Time step using leapfrog method.
 

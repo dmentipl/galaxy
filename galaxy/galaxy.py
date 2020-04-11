@@ -1,6 +1,7 @@
 """Main module."""
 
 import pathlib
+from time import time
 
 import numpy as np
 from energy import get_conserved
@@ -160,5 +161,11 @@ def main(parameters):
 
 if __name__ == '__main__':
 
+    # Timer
+    _time = time()
+
     # Run the code with PARAMETERS defined above
     main(PARAMETERS)
+
+    # Print time taken
+    print(f'Time taken: {time() - _time}')
