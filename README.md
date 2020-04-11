@@ -14,7 +14,7 @@ To run the simulation, first activate the Conda environment, then run the main m
 
 ```bash
 conda activate galaxy
-python galaxy/galaxy.py
+python galaxy/run.py
 ```
 
 To analyse and visualise the results open the `galaxy.ipynb` notebook in Jupter Lab.

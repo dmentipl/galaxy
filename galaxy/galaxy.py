@@ -1,7 +1,6 @@
 """Main module."""
 
 import pathlib
-from time import time
 
 import numpy as np
 from energy import get_conserved
@@ -9,32 +8,6 @@ from files import write_snapshot
 from initial import initialise
 from potential import get_acceleration
 from timestep import step_leapfrog
-
-# ------------------------------------------------------------------------------------ #
-# SET PARAMETERS HERE {{{
-
-PARAMETERS = dict()
-
-# Parameters for initial conditions
-PARAMETERS['mass1'] = 1.0
-PARAMETERS['mass2'] = 1.0
-PARAMETERS['eccentricity'] = 0.6
-PARAMETERS['minimum_distance'] = 25.0
-PARAMETERS['inclination'] = 60
-PARAMETERS['number_of_rings'] = 5
-PARAMETERS['ring_spacing'] = 3.0
-
-# Parameters for time stepping
-PARAMETERS['dt'] = 0.01
-PARAMETERS['dtout'] = 10.0
-PARAMETERS['tmax'] = 2000.0
-
-# Parameters for data and files
-PARAMETERS['output_directory'] = 'data'
-PARAMETERS['filename_prefix'] = 'nbody'
-
-# }}}
-# ------------------------------------------------------------------------------------ #
 
 
 def main(parameters):
@@ -157,15 +130,3 @@ def main(parameters):
                 f'{angular_momentum[2]:.8e}'
                 '\n'
             )
-
-
-if __name__ == '__main__':
-
-    # Timer
-    _time = time()
-
-    # Run the code with PARAMETERS defined above
-    main(PARAMETERS)
-
-    # Print time taken
-    print(f'Time taken: {time() - _time}')
