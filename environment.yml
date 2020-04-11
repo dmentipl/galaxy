@@ -1,0 +1,19 @@
+# Conda environment for galaxy simulation
+#
+# Create:     conda env create --file environment.yml
+# Activate:   conda activate galaxy
+# Deactivate: conda deactivate
+
+name: galaxy
+
+channels:
+  - conda-forge
+
+dependencies:
+  - python>=3.6
+  - ipython
+  - jupyterlab
+  - matplotlib
+  - numba
+  - numpy
+  - pandas
