@@ -23,12 +23,19 @@ def get_acceleration(position, mass):
     number_of_particles = len(mass)
     acceleration = np.zeros(position.shape)
 
+    # Loop over all particles...
     for i in range(number_of_particles):
-        for j in (0, 1):
-            if j != i:
-                dx = position[i, :] - position[j, :]
-                r = np.linalg.norm(dx)
-                acceleration[i, :] += -mass[j] * dx / r ** 3
+        # ...and all neighbours
+        for j in range(number_of_particles):
+            # Ignore self
+            if j == i:
+                continue
+            # Massless particles don't contribute
+            if mass[j] == 0:
+                continue
+            dx = position[i, :] - position[j, :]
+            r = np.sqrt(dx[0] ** 2 + dx[1] ** 2 + dx[2] ** 2)
+            acceleration[i, :] += -mass[j] * dx / r ** 3
     return acceleration
 
 
@@ -51,12 +58,22 @@ def potential(position, mass):
     number_of_particles = len(mass)
     potential = 0.0
 
+    # Loop over all particles...
     for i in range(number_of_particles):
-        phi = 0.0
-        for j in range(i + 1, 2):
+        # ...and all neighbours
+        for j in range(number_of_particles):
+            # Ignore self
+            if j == i:
+                continue
+            # Massless particles don't contribute
+            if mass[j] == 0:
+                continue
             dx = position[i, :] - position[j, :]
-            r = np.linalg.norm(dx)
+            r = np.sqrt(dx[0] ** 2 + dx[1] ** 2 + dx[2] ** 2)
             phi += -mass[j] / r
         potential += mass[i] * phi
+
+    # Account for double counting
+    potential /= 2
 
     return potential
