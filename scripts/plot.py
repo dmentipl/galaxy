@@ -66,6 +66,8 @@ def animate(idx):
     df = dataframes[idx]
     xy = np.array([df['x'], df['y']]).T
     scat.set_offsets(xy)
+    # Note that we return scat in a list, as expected by FuncAnimation.
+    # I.e. `return [scat]` not `return scat`.
     return [scat]
 
 
