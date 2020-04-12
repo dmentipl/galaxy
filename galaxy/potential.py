@@ -61,6 +61,7 @@ def potential(position, mass):
     # Loop over all particles...
     for i in range(number_of_particles):
         # ...and all neighbours
+        phi = 0.0
         for j in range(number_of_particles):
             # Ignore self
             if j == i:
